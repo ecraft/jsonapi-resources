@@ -1,6 +1,10 @@
 module ActionDispatch
   module Routing
     class Mapper
+      Scope.class_eval do
+        attr_accessor :temp_json_api_scope
+      end
+
       Resource.class_eval do
         def unformat_route(route)
           JSONAPI.configuration.route_formatter.unformat(route.to_s)
@@ -32,8 +36,9 @@ module ActionDispatch
             options[:except] = [:new, :edit]
           end
 
+
           resource @resource_type, options do
-            @scope[:jsonapi_resource] = @resource_type
+            @scope.temp_json_api_scope = @resource_type
 
             if block_given?
               yield
@@ -87,7 +92,7 @@ module ActionDispatch
           end
 
           resources @resource_type, options do
-            @scope[:jsonapi_resource] = @resource_type
+            @scope.temp_json_api_scope = @resource_type
 
             if block_given?
               yield
@@ -209,7 +214,7 @@ module ActionDispatch
         private
 
         def resource_type_with_module_prefix(resource = nil)
-          resource_name = resource || @scope[:jsonapi_resource]
+          resource_name = resource || @scope.temp_json_api_scope
           [@scope[:module], resource_name].compact.collect(&:to_s).join('/')
         end
       end
