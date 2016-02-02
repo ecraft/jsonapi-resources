@@ -68,7 +68,8 @@ module JSONAPI
       handle_exceptions(e)
     ensure
       if response.body.size > 0
-        response.headers['Content-Type'] = JSONAPI::MEDIA_TYPE
+        # TODO: Disabled to avoid Headers-already-sent
+        #response.headers['Content-Type'] = JSONAPI::MEDIA_TYPE
       end
     end
 
